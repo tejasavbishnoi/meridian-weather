@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getForecast } from "./services/api";
 import SearchBar from "./components/SearchBar";
 import CurrentWeather from "./components/CurrentWeather";
+import WeatherMetrics from "./components/WeatherMetrics";
+import DailyForecast from "./components/DailyForecast";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -43,11 +45,16 @@ function App() {
 
       <SearchBar onSelect={setLocation} />
 
-      {loading && <p className="muted">Loading...</p>}
-      {error && <p className="error">{error}</p>}
       {!loading && !error && weather && (
-        <CurrentWeather location={location} current={weather.current} />
-      )}
+  <>
+    <CurrentWeather location={location} current={weather.current} />
+    <WeatherMetrics
+      current={weather.current}
+      units={weather.current_units}
+    />
+    <DailyForecast daily={weather.daily} />
+  </>
+)}
     </main>
   );
 }
