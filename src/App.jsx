@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getForecast, reverseGeocode } from "./services/api";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import SearchBar from "./components/SearchBar";
+import Favorites from "./components/Favorites";
 import UnitsDropdown, { METRIC } from "./components/UnitsDropdown";
 import CurrentWeather from "./components/CurrentWeather";
 import WeatherMetrics from "./components/WeatherMetrics";
@@ -15,9 +16,17 @@ const DEFAULT_LOCATION = {
   longitude: 73.8553,
 };
 
+function isSamePlace(a, b) {
+  return (
+    Math.abs(a.latitude - b.latitude) < 0.01 &&
+    Math.abs(a.longitude - b.longitude) < 0.01
+  );
+}
+
 function App() {
   const [location, setLocation] = useLocalStorage("weather-location", null);
   const [units, setUnits] = useLocalStorage("weather-units", METRIC);
+  const [favorites, setFavorites] = useLocalStorage("weather-favorites", []);
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
@@ -87,6 +96,31 @@ function App() {
     setLocation(place);
   }
 
+  const isFavorite = location
+    ? favorites.some((f) => isSamePlace(f, location))
+    : false;
+
+  function removeFavorite(place) {
+    setFavorites(favorites.filter((f) => !isSamePlace(f, place)));
+  }
+
+  function toggleFavorite() {
+    if (!location) return;
+    if (isFavorite) {
+      removeFavorite(location);
+    } else {
+      setFavorites([
+        ...favorites,
+        {
+          name: location.name,
+          country: location.country,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+      ]);
+    }
+  }
+
   return (
     <main className="app">
       <header className="header">
@@ -108,6 +142,12 @@ function App() {
 
       <SearchBar onSelect={handleSelectLocation} />
 
+      <Favorites
+        favorites={favorites}
+        onSelect={handleSelectLocation}
+        onRemove={removeFavorite}
+      />
+
       {notice && <p className="notice">{notice}</p>}
       {(locating || (loading && !weather)) && (
         <p className="muted">
@@ -115,9 +155,15 @@ function App() {
         </p>
       )}
       {error && <p className="error">{error}</p>}
+
       {weather && location && (
         <div className={loading ? "refreshing" : ""}>
-          <CurrentWeather location={location} current={weather.current} />
+          <CurrentWeather
+            location={location}
+            current={weather.current}
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
+          />
           <WeatherMetrics
             current={weather.current}
             units={weather.current_units}

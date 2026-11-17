@@ -471,3 +471,100 @@ body {
   background: #fef3c7;
   color: #92400e;
 }
+/* Favorites */
+.favorites {
+  margin-bottom: 1.5rem;
+}
+
+.favorites-title {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.favorites-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.favorites-empty {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.favorite-chip {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: white;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.favorite-chip:hover {
+  border-color: var(--primary);
+}
+
+.favorite-name,
+.favorite-remove {
+  border: none;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.favorite-name {
+  padding: 0.45rem 0.4rem 0.45rem 0.9rem;
+}
+
+.favorite-remove {
+  padding: 0.45rem 0.8rem 0.45rem 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.favorite-name:hover {
+  color: var(--primary-dark);
+}
+
+.favorite-remove:hover {
+  color: #dc2626;
+}
+
+.favorite-name:focus-visible,
+.favorite-remove:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  border-radius: 999px;
+}
+
+/* Star button on the weather card */
+.current-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fav-btn {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.fav-btn:hover {
+  transform: scale(1.2);
+}
+
+.fav-btn:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
