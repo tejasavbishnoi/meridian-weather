@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getForecast } from "./services/api";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 import SearchBar from "./components/SearchBar";
+import UnitsDropdown, { METRIC } from "./components/UnitsDropdown";
 import CurrentWeather from "./components/CurrentWeather";
 import WeatherMetrics from "./components/WeatherMetrics";
 import DailyForecast from "./components/DailyForecast";
@@ -15,6 +17,7 @@ const DEFAULT_LOCATION = {
 
 function App() {
   const [location, setLocation] = useState(DEFAULT_LOCATION);
+  const [units, setUnits] = useLocalStorage("weather-units", METRIC);
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +30,7 @@ function App() {
         const data = await getForecast({
           latitude: location.latitude,
           longitude: location.longitude,
+          units,
         });
         setWeather(data);
       } catch (err) {
@@ -36,32 +40,40 @@ function App() {
       }
     }
     load();
-  }, [location]);
+  }, [location, units]);
+
+  function handleSelectLocation(place) {
+    setWeather(null); // clear old data so the new city doesn't show stale numbers
+    setLocation(place);
+  }
 
   return (
     <main className="app">
       <header className="header">
         <h1>☁️ Weather App</h1>
+        <UnitsDropdown units={units} onChange={setUnits} />
       </header>
 
-      <SearchBar onSelect={setLocation} />
+      <SearchBar onSelect={handleSelectLocation} />
 
-      {!loading && !error && weather && (
-  <>
-    <CurrentWeather location={location} current={weather.current} />
-    <WeatherMetrics
-      current={weather.current}
-      units={weather.current_units}
-    />
-    <DailyForecast daily={weather.daily} />
-<HourlyForecast
-  key={`${location.latitude}-${location.longitude}`}
-  hourly={weather.hourly}
-  daily={weather.daily}
-  currentTime={weather.current.time}
-/>
-  </>
-)}
+      {loading && !weather && <p className="muted">Loading...</p>}
+      {error && <p className="error">{error}</p>}
+      {weather && (
+        <div className={loading ? "refreshing" : ""}>
+          <CurrentWeather location={location} current={weather.current} />
+          <WeatherMetrics
+            current={weather.current}
+            units={weather.current_units}
+          />
+          <DailyForecast daily={weather.daily} />
+          <HourlyForecast
+            key={`${location.latitude}-${location.longitude}`}
+            hourly={weather.hourly}
+            daily={weather.daily}
+            currentTime={weather.current.time}
+          />
+        </div>
+      )}
     </main>
   );
 }
