@@ -24,7 +24,7 @@ export async function getForecast({
     latitude,
     longitude,
     current:
-      "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,surface_pressure,visibility,uv_index",
+      "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,surface_pressure,visibility,uv_index,is_day",
     hourly: "temperature_2m,weather_code",
     daily:
       "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",

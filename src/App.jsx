@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { getForecast, reverseGeocode } from "./services/api";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { METRIC } from "./utils/units";
+import { getSkyType } from "./utils/sky";
+import { getPreferredTheme } from "./utils/theme";
+import SkyBackground from "./components/SkyBackground";
 import SearchBar from "./components/SearchBar";
 import Favorites from "./components/Favorites";
 import UnitsDropdown from "./components/UnitsDropdown";
@@ -30,14 +33,27 @@ function App() {
   const [location, setLocation] = useLocalStorage("weather-location", null);
   const [units, setUnits] = useLocalStorage("weather-units", METRIC);
   const [favorites, setFavorites] = useLocalStorage("weather-favorites", []);
+  const [theme, setTheme] = useLocalStorage(
+    "weather-theme",
+    getPreferredTheme()
+  );
   const [weather, setWeather] = useState(null);
+  const [skyInfo, setSkyInfo] = useState({ sky: "clear", isNight: false });
   const [loading, setLoading] = useState(true);
-  // On a first visit (no saved location) we start in the "locating" state
   const [locating, setLocating] = useState(() => !location);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState("");
   const [showCompare, setShowCompare] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+
+  // Apply theme, sky and time of day to the <html> element for CSS
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    root.dataset.sky = skyInfo.sky;
+    root.dataset.time = skyInfo.isNight ? "night" : "day";
+    root.style.colorScheme = theme;
+  }, [theme, skyInfo]);
 
   // Asks the browser for the position. State is only set inside callbacks.
   function requestPosition() {
@@ -67,7 +83,6 @@ function App() {
     );
   }
 
-  // Called by the 📍 button
   function handleLocateClick() {
     setLocating(true);
     setNotice("");
@@ -94,6 +109,10 @@ function App() {
           units,
         });
         setWeather(data);
+        setSkyInfo({
+          sky: getSkyType(data.current.weather_code),
+          isNight: data.current.is_day === 0,
+        });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -135,99 +154,116 @@ function App() {
   }
 
   return (
-    <main className="app">
-      <header className="header">
-        <h1>☁️ Weather App</h1>
-        <div className="header-actions">
-          <button
-            type="button"
-            className="compare-btn"
-            onClick={() => setShowCompare(!showCompare)}
-            aria-pressed={showCompare}
-          >
-            {showCompare ? "← Back" : "⚖️ Compare"}
-          </button>
-          <button
-            type="button"
-            className="locate-btn"
-            onClick={handleLocateClick}
-            disabled={locating}
-            aria-label="Use my current location"
-            title="Use my current location"
-          >
-            📍
-          </button>
-          <UnitsDropdown units={units} onChange={setUnits} />
-        </div>
-      </header>
+    <>
+      <SkyBackground
+        sky={skyInfo.sky}
+        isNight={skyInfo.isNight}
+        theme={theme}
+      />
 
-      {showCompare ? (
-        <CompareLocations
-          units={units}
-          favorites={favorites}
-          currentLocation={location}
-        />
-      ) : (
-        <>
-          <SearchBar onSelect={handleSelectLocation} />
+      <main className="app">
+        <header className="header">
+          <h1>☁️ Weather App</h1>
+          <div className="header-actions">
+            <button
+              type="button"
+              className="compare-btn"
+              onClick={() => setShowCompare(!showCompare)}
+              aria-pressed={showCompare}
+            >
+              {showCompare ? "← Back" : "⚖️ Compare"}
+            </button>
+            <button
+              type="button"
+              className="locate-btn"
+              onClick={handleLocateClick}
+              disabled={locating}
+              aria-label="Use my current location"
+              title="Use my current location"
+            >
+              📍
+            </button>
+            <button
+              type="button"
+              className="theme-btn"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
+            <UnitsDropdown units={units} onChange={setUnits} />
+          </div>
+        </header>
 
-          <Favorites
+        {showCompare ? (
+          <CompareLocations
+            units={units}
             favorites={favorites}
-            onSelect={handleSelectLocation}
-            onRemove={removeFavorite}
+            currentLocation={location}
           />
+        ) : (
+          <>
+            <SearchBar onSelect={handleSelectLocation} />
 
-          {notice && <p className="notice">{notice}</p>}
-          {(locating || (loading && !weather)) && (
-            <div className="loading" role="status">
-              <div className="spinner" />
-              <p className="muted">
-                {locating ? "Detecting your location..." : "Loading..."}
-              </p>
-            </div>
-          )}
-          {error && (
-            <div className="card error-card" role="alert">
-              <p>⚠️ {error}. Check your connection and try again.</p>
-              <button
-                type="button"
-                className="retry-btn"
-                onClick={() => setRetryKey((k) => k + 1)}
-              >
-                Retry
-              </button>
-            </div>
-          )}
+            <Favorites
+              favorites={favorites}
+              onSelect={handleSelectLocation}
+              onRemove={removeFavorite}
+            />
 
-          {weather && location && (
-            <div className={loading ? "refreshing" : ""}>
-              <CurrentWeather
-                location={location}
-                current={weather.current}
-                isFavorite={isFavorite}
-                onToggleFavorite={toggleFavorite}
-              />
-              <WeatherMetrics
-                current={weather.current}
-                units={weather.current_units}
-              />
-              <ExtraDetails
-                current={weather.current}
-                units={weather.current_units}
-                daily={weather.daily}
-              />
-              <DailyForecast daily={weather.daily} />
-              <HourlyForecast
-                key={`${location.latitude}-${location.longitude}`}
-                hourly={weather.hourly}
-                daily={weather.daily}
-                currentTime={weather.current.time}
-              />
-            </div>
-          )}
-        </>
-      )}
-    </main>
+            {notice && <p className="notice">{notice}</p>}
+            {(locating || (loading && !weather)) && (
+              <div className="loading" role="status">
+                <div className="spinner" />
+                <p className="muted">
+                  {locating ? "Detecting your location..." : "Loading..."}
+                </p>
+              </div>
+            )}
+            {error && (
+              <div className="card error-card" role="alert">
+                <p>⚠️ {error}. Check your connection and try again.</p>
+                <button
+                  type="button"
+                  className="retry-btn"
+                  onClick={() => setRetryKey((k) => k + 1)}
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
+            {weather && location && (
+              <div className={loading ? "refreshing" : ""}>
+                <CurrentWeather
+                  location={location}
+                  current={weather.current}
+                  isFavorite={isFavorite}
+                  onToggleFavorite={toggleFavorite}
+                />
+                <WeatherMetrics
+                  current={weather.current}
+                  units={weather.current_units}
+                />
+                <ExtraDetails
+                  current={weather.current}
+                  units={weather.current_units}
+                  daily={weather.daily}
+                />
+                <DailyForecast daily={weather.daily} />
+                <HourlyForecast
+                  key={`${location.latitude}-${location.longitude}`}
+                  hourly={weather.hourly}
+                  daily={weather.daily}
+                  currentTime={weather.current.time}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </main>
+    </>
   );
 }
 
