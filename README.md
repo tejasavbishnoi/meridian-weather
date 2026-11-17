@@ -2,7 +2,7 @@
 
 A responsive weather app built with React and Vite, using the free [Open-Meteo API](https://open-meteo.com/). The weather sets the look of the page: the sky, the clouds, and even the weight of the temperature numerals change with the forecast. A serverless function connects it to an AI model for a daily briefing and a chat box.
 
-**Live demo:** [add link after deploying]
+**Live demo:** https://meridian-weather-one.vercel.app/
 
 ![Meridian weather app](screenshot.png)
 
