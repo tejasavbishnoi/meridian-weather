@@ -9,8 +9,7 @@ import SearchBar from "./components/SearchBar";
 import Favorites from "./components/Favorites";
 import UnitsDropdown from "./components/UnitsDropdown";
 import CurrentWeather from "./components/CurrentWeather";
-import WeatherMetrics from "./components/WeatherMetrics";
-import ExtraDetails from "./components/ExtraDetails";
+import Readout from "./components/Readout";
 import DailyForecast from "./components/DailyForecast";
 import HourlyForecast from "./components/HourlyForecast";
 import CompareLocations from "./components/CompareLocations";
@@ -239,14 +238,12 @@ function App() {
                 <CurrentWeather
                   location={location}
                   current={weather.current}
+                  daily={weather.daily}
+                  units={weather.current_units}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                 />
-                <WeatherMetrics
-                  current={weather.current}
-                  units={weather.current_units}
-                />
-                <ExtraDetails
+                <Readout
                   current={weather.current}
                   units={weather.current_units}
                   daily={weather.daily}
