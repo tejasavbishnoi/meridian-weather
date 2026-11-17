@@ -4,6 +4,7 @@ import SearchBar from "./components/SearchBar";
 import CurrentWeather from "./components/CurrentWeather";
 import WeatherMetrics from "./components/WeatherMetrics";
 import DailyForecast from "./components/DailyForecast";
+import HourlyForecast from "./components/HourlyForecast";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -53,6 +54,12 @@ function App() {
       units={weather.current_units}
     />
     <DailyForecast daily={weather.daily} />
+<HourlyForecast
+  key={`${location.latitude}-${location.longitude}`}
+  hourly={weather.hourly}
+  daily={weather.daily}
+  currentTime={weather.current.time}
+/>
   </>
 )}
     </main>

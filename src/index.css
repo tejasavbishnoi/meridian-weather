@@ -255,3 +255,82 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* Hourly forecast */
+.hourly {
+  margin-top: 1.75rem;
+}
+
+.hourly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.hourly-title {
+  font-size: 1.1rem;
+  color: var(--primary-dark);
+}
+
+.hourly-header select {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.hourly-header select:hover {
+  border-color: var(--primary);
+}
+
+.hourly-header select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.hourly-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.hourly-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.hourly-item:hover {
+  background: #eff6ff;
+  border-color: var(--primary);
+}
+
+.hourly-now {
+  background: #dbeafe;
+  border-color: var(--primary);
+  font-weight: 600;
+}
+
+.hourly-icon {
+  font-size: 1.5rem;
+}
+
+.hourly-time {
+  flex: 1;
+}
+
+.hourly-temp {
+  font-weight: 600;
+}
