@@ -1,0 +1,25 @@
+:root {
+  --bg-start: #dbeafe;
+  --bg-end: #f8fafc;
+  --card: rgba(255, 255, 255, 0.75);
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: rgba(148, 163, 184, 0.35);
+  --radius: 16px;
+  --shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+  min-height: 100vh;
+}

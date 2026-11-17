@@ -1,7 +1,8 @@
 function App() {
   return (
-    <div>
-      <h1>Weather App</h1>
+    <div style={{ padding: "2rem" }}>
+      <h1 style={{ color: "var(--primary)" }}>Weather App</h1>
+      <p style={{ color: "var(--text-muted)" }}>Blue and white cloudy theme</p>
     </div>
   );
 }
