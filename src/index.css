@@ -568,3 +568,141 @@ body {
   outline-offset: 3px;
   border-radius: 6px;
 }
+/* Compare button */
+.compare-btn {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.compare-btn:hover {
+  background: #eff6ff;
+  border-color: var(--primary);
+}
+
+.compare-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Compare view */
+.compare-heading {
+  font-size: 1.3rem;
+  color: var(--primary-dark);
+}
+
+.compare-sub {
+  margin: 0.25rem 0 1rem;
+}
+
+.quick-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.quick-add-btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: white;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.quick-add-btn:hover {
+  background: #eff6ff;
+  border-color: var(--primary);
+}
+
+.quick-add-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.compare-card {
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.compare-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.18);
+}
+
+.compare-card h3 {
+  padding-right: 1.5rem;
+  color: var(--primary-dark);
+}
+
+.compare-remove {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.compare-remove:hover {
+  color: #dc2626;
+}
+
+.compare-remove:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.compare-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.compare-icon {
+  font-size: 2.2rem;
+}
+
+.compare-temp {
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+
+.compare-label {
+  margin-bottom: 0.75rem;
+}
+
+.compare-rows {
+  border-top: 1px solid var(--border);
+}
+
+.compare-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.compare-row dd {
+  font-weight: 600;
+}

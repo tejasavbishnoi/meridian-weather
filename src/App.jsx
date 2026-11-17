@@ -8,6 +8,7 @@ import CurrentWeather from "./components/CurrentWeather";
 import WeatherMetrics from "./components/WeatherMetrics";
 import DailyForecast from "./components/DailyForecast";
 import HourlyForecast from "./components/HourlyForecast";
+import CompareLocations from "./components/CompareLocations";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -32,6 +33,7 @@ function App() {
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState("");
+  const [showCompare, setShowCompare] = useState(false);
 
   // Ask the browser for the user's position
   function detectLocation() {
@@ -128,6 +130,14 @@ function App() {
         <div className="header-actions">
           <button
             type="button"
+            className="compare-btn"
+            onClick={() => setShowCompare(!showCompare)}
+            aria-pressed={showCompare}
+          >
+            {showCompare ? "← Back" : "⚖️ Compare"}
+          </button>
+          <button
+            type="button"
             className="locate-btn"
             onClick={detectLocation}
             disabled={locating}
@@ -140,42 +150,52 @@ function App() {
         </div>
       </header>
 
-      <SearchBar onSelect={handleSelectLocation} />
+      {showCompare ? (
+        <CompareLocations
+          units={units}
+          favorites={favorites}
+          currentLocation={location}
+        />
+      ) : (
+        <>
+          <SearchBar onSelect={handleSelectLocation} />
 
-      <Favorites
-        favorites={favorites}
-        onSelect={handleSelectLocation}
-        onRemove={removeFavorite}
-      />
+          <Favorites
+            favorites={favorites}
+            onSelect={handleSelectLocation}
+            onRemove={removeFavorite}
+          />
 
-      {notice && <p className="notice">{notice}</p>}
-      {(locating || (loading && !weather)) && (
-        <p className="muted">
-          {locating ? "Detecting your location..." : "Loading..."}
-        </p>
-      )}
-      {error && <p className="error">{error}</p>}
+          {notice && <p className="notice">{notice}</p>}
+          {(locating || (loading && !weather)) && (
+            <p className="muted">
+              {locating ? "Detecting your location..." : "Loading..."}
+            </p>
+          )}
+          {error && <p className="error">{error}</p>}
 
-      {weather && location && (
-        <div className={loading ? "refreshing" : ""}>
-          <CurrentWeather
-            location={location}
-            current={weather.current}
-            isFavorite={isFavorite}
-            onToggleFavorite={toggleFavorite}
-          />
-          <WeatherMetrics
-            current={weather.current}
-            units={weather.current_units}
-          />
-          <DailyForecast daily={weather.daily} />
-          <HourlyForecast
-            key={`${location.latitude}-${location.longitude}`}
-            hourly={weather.hourly}
-            daily={weather.daily}
-            currentTime={weather.current.time}
-          />
-        </div>
+          {weather && location && (
+            <div className={loading ? "refreshing" : ""}>
+              <CurrentWeather
+                location={location}
+                current={weather.current}
+                isFavorite={isFavorite}
+                onToggleFavorite={toggleFavorite}
+              />
+              <WeatherMetrics
+                current={weather.current}
+                units={weather.current_units}
+              />
+              <DailyForecast daily={weather.daily} />
+              <HourlyForecast
+                key={`${location.latitude}-${location.longitude}`}
+                hourly={weather.hourly}
+                daily={weather.daily}
+                currentTime={weather.current.time}
+              />
+            </div>
+          )}
+        </>
       )}
     </main>
   );
