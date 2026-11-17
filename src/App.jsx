@@ -162,7 +162,7 @@ function App() {
 
       <main className="app">
         <header className="header">
-          <h1>☁️ Weather App</h1>
+          <h1 className="brand">Weather</h1>
           <div className="header-actions">
             <button
               type="button"
@@ -243,12 +243,19 @@ function App() {
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                 />
-                <Readout
-                  current={weather.current}
-                  units={weather.current_units}
-                  daily={weather.daily}
-                />
-                <DailyForecast daily={weather.daily} />
+
+                <div className="duo">
+                  <Readout
+                    current={weather.current}
+                    units={weather.current_units}
+                    daily={weather.daily}
+                  />
+                  <DailyForecast
+                    daily={weather.daily}
+                    currentTemp={weather.current.temperature_2m}
+                  />
+                </div>
+
                 <HourlyForecast
                   key={`${location.latitude}-${location.longitude}`}
                   hourly={weather.hourly}

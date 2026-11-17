@@ -1346,3 +1346,251 @@ body {
     display: none;
   }
 }
+/* ================= Redesign phase 2 ================= */
+.app {
+  max-width: 1080px;
+}
+
+.header .brand {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  font-variation-settings: "wdth" 78;
+  letter-spacing: -0.02em;
+}
+
+.sheet-title {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ---------- Two-column row: readout + week ---------- */
+.duo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .duo {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+.duo .readout,
+.duo .week {
+  margin-top: 0;
+}
+
+/* Readout is now a single column of hairline rows */
+.readout-list {
+  grid-template-columns: 1fr;
+}
+
+.readout-row:nth-last-child(-n + 2) {
+  border-bottom: 1px solid var(--border);
+}
+
+.readout-row:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- Week: range bars on a shared scale ---------- */
+.week {
+  padding: 1.1rem 1.5rem 0.5rem;
+}
+
+.week-list {
+  list-style: none;
+}
+
+.week-row {
+  display: grid;
+  grid-template-columns: 3.4rem 2rem 2.2rem 1fr 2.2rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.72rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-row:last-child {
+  border-bottom: 0;
+}
+
+.week-day {
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.week-row:hover .week-day {
+  color: var(--heading);
+}
+
+.week-icon {
+  font-size: 1.4rem;
+}
+
+.week-low {
+  text-align: right;
+  color: var(--text-muted);
+}
+
+.week-high {
+  font-weight: 600;
+}
+
+.week-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border);
+}
+
+.week-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--heading);
+}
+
+.week-now {
+  position: absolute;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--sun);
+  border: 2px solid var(--panel);
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- Hourly curve ---------- */
+.curve-sheet {
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem 1rem;
+}
+
+.curve-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.curve-read {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.9rem;
+}
+
+.curve-big {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 600;
+  font-variation-settings: "wdth" 85;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.curve-meta {
+  color: var(--text-muted);
+}
+
+.day-tabs {
+  display: flex;
+  gap: 0.35rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.day-tab {
+  flex: none;
+  padding: 0.4rem 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.day-tab:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.day-tab[aria-pressed="true"] {
+  background: var(--primary);
+  color: #fff;
+}
+
+.curve-scroll {
+  margin-top: 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.curve {
+  min-width: 760px;
+  border-radius: 12px;
+  cursor: crosshair;
+  touch-action: pan-x pan-y;
+}
+
+.curve svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.curve-line {
+  fill: none;
+  stroke: var(--heading);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.curve-label {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+
+.curve-peak {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.curve-now {
+  fill: var(--sun);
+  stroke: var(--panel);
+  stroke-width: 2;
+}
+
+.curve-active {
+  transition: transform 0.12s ease-out;
+}
+
+.curve-guide {
+  stroke: var(--text-muted);
+  stroke-opacity: 0.6;
+  stroke-dasharray: 3 5;
+}
+
+.curve-dot {
+  fill: var(--panel);
+  stroke: var(--heading);
+  stroke-width: 3;
+}
