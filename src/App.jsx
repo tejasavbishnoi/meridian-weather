@@ -13,6 +13,8 @@ import Readout from "./components/Readout";
 import DailyForecast from "./components/DailyForecast";
 import HourlyForecast from "./components/HourlyForecast";
 import CompareLocations from "./components/CompareLocations";
+import Briefing from "./components/Briefing";
+import AskMeridian from "./components/AskMeridian";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -162,7 +164,7 @@ function App() {
 
       <main className="app">
         <header className="header">
-          <h1 className="brand">Weather</h1>
+          <h1 className="brand">Meridian</h1>
           <div className="header-actions">
             <button
               type="button"
@@ -244,6 +246,7 @@ function App() {
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                 />
+                <Briefing location={location} weather={weather} />
 
                 <div className="duo">
                   <Readout
@@ -262,6 +265,11 @@ function App() {
                   hourly={weather.hourly}
                   daily={weather.daily}
                   currentTime={weather.current.time}
+                />
+                <AskMeridian
+                  key={`ask-${location.latitude}-${location.longitude}`}
+                  location={location}
+                  weather={weather}
                 />
               </div>
             )}
