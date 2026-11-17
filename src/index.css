@@ -432,3 +432,42 @@ body {
   opacity: 0.6;
   transition: opacity 0.2s;
 }
+/* Geolocation */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.locate-btn {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.locate-btn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: var(--primary);
+}
+
+.locate-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.locate-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.notice {
+  margin-bottom: 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  background: #fef3c7;
+  color: #92400e;
+}

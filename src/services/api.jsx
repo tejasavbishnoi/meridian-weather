@@ -39,3 +39,24 @@ export async function getForecast({
   if (!res.ok) throw new Error("Failed to fetch forecast");
   return res.json();
 }
+// Turns coordinates into a place name (Open-Meteo has no reverse geocoding)
+export async function reverseGeocode(latitude, longitude) {
+  try {
+    const params = new URLSearchParams({
+      latitude,
+      longitude,
+      localityLanguage: "en",
+    });
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?${params}`
+    );
+    if (!res.ok) throw new Error("Reverse geocoding failed");
+    const data = await res.json();
+    return {
+      name: data.city || data.locality || "Your location",
+      country: data.countryName || "",
+    };
+  } catch {
+    return { name: "Your location", country: "" };
+  }
+}

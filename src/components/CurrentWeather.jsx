@@ -11,9 +11,7 @@ function CurrentWeather({ location, current }) {
   return (
     <section className="card current">
       <div>
-        <h2>
-          {location.name}, {location.country}
-        </h2>
+        <h2>{[location.name, location.country].filter(Boolean).join(", ")}</h2>
         <p className="muted">{date}</p>
         <p className="muted">{info.label}</p>
       </div>
