@@ -9,6 +9,7 @@ import WeatherMetrics from "./components/WeatherMetrics";
 import DailyForecast from "./components/DailyForecast";
 import HourlyForecast from "./components/HourlyForecast";
 import CompareLocations from "./components/CompareLocations";
+import ExtraDetails from "./components/ExtraDetails";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -186,6 +187,16 @@ function App() {
                 current={weather.current}
                 units={weather.current_units}
               />
+                            <WeatherMetrics
+                current={weather.current}
+                units={weather.current_units}
+              />
+              <ExtraDetails
+                current={weather.current}
+                units={weather.current_units}
+                daily={weather.daily}
+              />
+              <DailyForecast daily={weather.daily} />
               <DailyForecast daily={weather.daily} />
               <HourlyForecast
                 key={`${location.latitude}-${location.longitude}`}

@@ -706,3 +706,76 @@ body {
 .compare-row dd {
   font-weight: 600;
 }
+/* Extra details */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.detail {
+  padding: 1rem 1.25rem;
+}
+
+.uv-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.uv-bar {
+  height: 8px;
+  margin-top: 0.75rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.uv-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s;
+}
+
+.sun-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.sun-arc {
+  width: 100%;
+  max-width: 340px;
+  margin-top: 0.5rem;
+}
+
+.sun-times {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 340px;
+}
+
+.sun-times div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sun-length {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 800px) {
+  .details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 450px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
