@@ -32,8 +32,8 @@ The browser never sees the API key. The React app sends a compact summary of the
 
 ## Run locally
 
-    git clone https://github.com/[your-username]/[repo-name].git
-    cd [repo-name]
+    git clone https://github.com/tejasavbishnoi/meridian-weather.git
+    cd meridian-weather
     npm install
     cp .env.example .env.local
 
