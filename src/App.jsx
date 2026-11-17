@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { getForecast, reverseGeocode } from "./services/api";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { METRIC } from "./utils/units";
 import SearchBar from "./components/SearchBar";
 import Favorites from "./components/Favorites";
-import UnitsDropdown, { METRIC } from "./components/UnitsDropdown";
+import UnitsDropdown from "./components/UnitsDropdown";
 import CurrentWeather from "./components/CurrentWeather";
 import WeatherMetrics from "./components/WeatherMetrics";
+import ExtraDetails from "./components/ExtraDetails";
 import DailyForecast from "./components/DailyForecast";
 import HourlyForecast from "./components/HourlyForecast";
 import CompareLocations from "./components/CompareLocations";
-import ExtraDetails from "./components/ExtraDetails";
 
 const DEFAULT_LOCATION = {
   name: "Pune",
@@ -31,21 +32,27 @@ function App() {
   const [favorites, setFavorites] = useLocalStorage("weather-favorites", []);
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [locating, setLocating] = useState(false);
+  // On a first visit (no saved location) we start in the "locating" state
+  const [locating, setLocating] = useState(() => !location);
   const [error, setError] = useState(null);
   const [notice, setNotice] = useState("");
   const [showCompare, setShowCompare] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
-  // Ask the browser for the user's position
-  function detectLocation() {
-    if (!navigator.geolocation) {
-      setNotice("Geolocation is not supported in this browser.");
+  // Asks the browser for the position. State is only set inside callbacks.
+  function requestPosition() {
+    function fail(message) {
+      setNotice(message);
       setLocation((prev) => prev ?? DEFAULT_LOCATION);
-      return;
+      setLocating(false);
     }
 
-    setLocating(true);
-    setNotice("");
+    if (!navigator.geolocation) {
+      Promise.resolve().then(() =>
+        fail("Geolocation is not supported in this browser.")
+      );
+      return;
+    }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -55,18 +62,21 @@ function App() {
         setLocation({ ...place, latitude, longitude });
         setLocating(false);
       },
-      () => {
-        setNotice("Location access denied. Showing a default city instead.");
-        setLocation((prev) => prev ?? DEFAULT_LOCATION);
-        setLocating(false);
-      },
+      () => fail("Location access denied. Showing a default city instead."),
       { timeout: 10000 }
     );
   }
 
+  // Called by the 📍 button
+  function handleLocateClick() {
+    setLocating(true);
+    setNotice("");
+    requestPosition();
+  }
+
   // First visit: no saved location yet, so detect it
   useEffect(() => {
-    if (!location) detectLocation();
+    if (!location) requestPosition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -91,7 +101,7 @@ function App() {
       }
     }
     load();
-  }, [location, units]);
+  }, [location, units, retryKey]);
 
   function handleSelectLocation(place) {
     setNotice("");
@@ -140,7 +150,7 @@ function App() {
           <button
             type="button"
             className="locate-btn"
-            onClick={detectLocation}
+            onClick={handleLocateClick}
             disabled={locating}
             aria-label="Use my current location"
             title="Use my current location"
@@ -169,11 +179,25 @@ function App() {
 
           {notice && <p className="notice">{notice}</p>}
           {(locating || (loading && !weather)) && (
-            <p className="muted">
-              {locating ? "Detecting your location..." : "Loading..."}
-            </p>
+            <div className="loading" role="status">
+              <div className="spinner" />
+              <p className="muted">
+                {locating ? "Detecting your location..." : "Loading..."}
+              </p>
+            </div>
           )}
-          {error && <p className="error">{error}</p>}
+          {error && (
+            <div className="card error-card" role="alert">
+              <p>⚠️ {error}. Check your connection and try again.</p>
+              <button
+                type="button"
+                className="retry-btn"
+                onClick={() => setRetryKey((k) => k + 1)}
+              >
+                Retry
+              </button>
+            </div>
+          )}
 
           {weather && location && (
             <div className={loading ? "refreshing" : ""}>
@@ -187,16 +211,11 @@ function App() {
                 current={weather.current}
                 units={weather.current_units}
               />
-                            <WeatherMetrics
-                current={weather.current}
-                units={weather.current_units}
-              />
               <ExtraDetails
                 current={weather.current}
                 units={weather.current_units}
                 daily={weather.daily}
               />
-              <DailyForecast daily={weather.daily} />
               <DailyForecast daily={weather.daily} />
               <HourlyForecast
                 key={`${location.latitude}-${location.longitude}`}

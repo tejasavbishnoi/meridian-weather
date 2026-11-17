@@ -18,10 +18,7 @@ function CompareLocations({ units, favorites, currentLocation }) {
 
   // Fetch weather for every place in the list
   useEffect(() => {
-    if (places.length === 0) {
-      setData({});
-      return;
-    }
+        if (places.length === 0) return;
 
     let cancelled = false;
 

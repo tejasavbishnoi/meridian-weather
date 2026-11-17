@@ -1,16 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export const METRIC = {
-  temperature: "celsius",
-  wind: "kmh",
-  precipitation: "mm",
-};
-
-export const IMPERIAL = {
-  temperature: "fahrenheit",
-  wind: "mph",
-  precipitation: "inch",
-};
+import { METRIC, IMPERIAL } from "../utils/units";
 
 const GROUPS = [
   {
@@ -41,11 +31,31 @@ const GROUPS = [
 
 function UnitsDropdown({ units, onChange }) {
   const [open, setOpen] = useState(false);
+    const ref = useRef(null);
+
+  // Close the panel on outside click or Escape
+  useEffect(() => {
+    if (!open) return;
+
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    function handleKey(e) {
+      if (e.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
 
   const isImperial = GROUPS.every((g) => units[g.key] === IMPERIAL[g.key]);
 
   return (
-    <div className="units">
+    <div className="units" ref={ref}>
       <button
         type="button"
         className="units-toggle"

@@ -26,7 +26,13 @@ function SearchBar({ onSelect }) {
   }
 
   return (
-    <div className="search">
+    <div className="search"
+    onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          setResults([]);
+          setMessage("");
+        }
+      }}>
       <form onSubmit={handleSubmit} className="search-form">
         <input
           type="text"
