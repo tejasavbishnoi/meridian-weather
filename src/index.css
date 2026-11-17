@@ -1594,3 +1594,115 @@ body {
   stroke: var(--heading);
   stroke-width: 3;
 }
+/* ================= Redesign phase 3 ================= */
+:root {
+  --rain: #4f9be8;
+}
+
+/* ---------- Weather icons ---------- */
+.wi {
+  display: inline-block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+  vertical-align: -0.12em;
+}
+
+.wi-sun {
+  fill: var(--sun);
+  stroke: none;
+}
+
+.wi-ray {
+  stroke: var(--sun);
+  stroke-width: 1.8;
+}
+
+.wi-cloud {
+  fill: currentColor;
+  fill-opacity: 0.12;
+}
+
+.wi-moon {
+  fill: currentColor;
+  fill-opacity: 0.14;
+}
+
+.wi-fog {
+  stroke-opacity: 0.7;
+}
+
+.wi-drop {
+  stroke: var(--rain);
+  stroke-width: 1.9;
+}
+
+.wi-flake {
+  fill: currentColor;
+  stroke: none;
+}
+
+.wi-bolt {
+  fill: var(--sun);
+  stroke: var(--sun);
+  stroke-width: 1;
+}
+
+.week-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.compare-icon {
+  display: inline-flex;
+}
+
+/* ---------- Advice line ---------- */
+.hero-advice {
+  max-width: 46ch;
+  margin-top: 0.5rem;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--sun);
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ---------- Rain bars and readout ---------- */
+.curve-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.curve-meta .wi {
+  font-size: 1.5em;
+}
+
+.rain-base {
+  stroke: var(--border);
+}
+
+.rain-bar {
+  fill: var(--rain);
+  opacity: 0.5;
+  transition: opacity 0.12s;
+}
+
+.rain-bar-active {
+  opacity: 1;
+}
+
+.rain-title {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+}

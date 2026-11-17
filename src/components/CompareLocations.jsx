@@ -3,6 +3,7 @@ import { getForecast } from "../services/api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { getWeatherInfo } from "../utils/weatherCodes";
 import SearchBar from "./SearchBar";
+import WeatherIcon from "./WeatherIcon";
 
 const MAX_PLACES = 4;
 
@@ -173,7 +174,10 @@ function CompareDetails({ forecast }) {
   return (
     <>
       <div className="compare-main">
-        <span className="compare-icon">{info.icon}</span>
+        <span className="compare-icon"><WeatherIcon
+            code={current.weather_code}
+            isDay={current.is_day !== 0}
+          /></span>
         <span className="compare-temp">
           {Math.round(current.temperature_2m)}°
         </span>

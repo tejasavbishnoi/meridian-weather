@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { getWeatherInfo } from "../utils/weatherCodes";
+import WeatherIcon from "./WeatherIcon";
 
 const W = 960;
-const H = 240;
+const H = 310;
 const PAD_X = 28;
 const PAD_TOP = 40;
-const PAD_BOTTOM = 34;
+const RAIN_BASE = H - 34;
+const RAIN_MAX = 46;
+const PLOT_BOTTOM = RAIN_BASE - RAIN_MAX - 56;
 
 function formatHour(hour) {
   const suffix = hour >= 12 ? "PM" : "AM";
@@ -30,6 +33,11 @@ function HourlyForecast({ hourly, daily, currentTime }) {
   const start = selectedDay * 24;
   const temps = hourly.temperature_2m.slice(start, start + 24);
   const codes = hourly.weather_code.slice(start, start + 24);
+  const rain = (hourly.precipitation_probability ?? []).slice(
+    start,
+    start + 24
+  );
+  const dayFlags = (hourly.is_day ?? []).slice(start, start + 24);
 
   // Today starts on the current hour, other days on noon
   const nowHour = Number(currentTime.slice(11, 13));
@@ -39,7 +47,8 @@ function HourlyForecast({ hourly, daily, currentTime }) {
   const max = Math.max(...temps);
   const span = max - min || 1;
   const step = (W - PAD_X * 2) / 23;
-  const plotHeight = H - PAD_TOP - PAD_BOTTOM;
+  const barWidth = step * 0.56;
+  const plotHeight = PLOT_BOTTOM - PAD_TOP;
 
   const points = temps.map((t, i) => ({
     x: PAD_X + i * step,
@@ -47,12 +56,15 @@ function HourlyForecast({ hourly, daily, currentTime }) {
   }));
 
   const line = buildPath(points);
-  const area = `${line} L${points[23].x},${H - PAD_BOTTOM} L${points[0].x},${
-    H - PAD_BOTTOM
-  } Z`;
+  const area = `${line} L${points[23].x},${PLOT_BOTTOM} L${
+    points[0].x
+  },${PLOT_BOTTOM} Z`;
 
   const active = points[activeHour];
   const info = getWeatherInfo(codes[activeHour]);
+  const isDay = dayFlags[activeHour] !== 0;
+  const rainPct = rain[activeHour] ?? 0;
+  const hasRain = rain.length > 0;
   const maxIndex = temps.indexOf(max);
   const minIndex = temps.indexOf(min);
 
@@ -90,8 +102,12 @@ function HourlyForecast({ hourly, daily, currentTime }) {
           <div className="curve-read">
             <span className="curve-big">{Math.round(temps[activeHour])}°</span>
             <span className="curve-meta">
-              {info.icon} {info.label} at {formatHour(activeHour)}
+              <WeatherIcon code={codes[activeHour]} isDay={isDay} />
+              {info.label} at {formatHour(activeHour)}
             </span>
+            {hasRain && (
+              <span className="curve-meta">{rainPct}% chance of rain</span>
+            )}
           </div>
         </div>
 
@@ -126,7 +142,9 @@ function HourlyForecast({ hourly, daily, currentTime }) {
           aria-valuenow={activeHour}
           aria-valuetext={`${formatHour(activeHour)}, ${Math.round(
             temps[activeHour]
-          )} degrees, ${info.label}`}
+          )} degrees, ${info.label}${
+            hasRain ? `, ${rainPct}% chance of rain` : ""
+          }`}
           onKeyDown={handleKeyDown}
           onPointerDown={(e) => setPickedHour(indexFromEvent(e))}
           onPointerMove={(e) => {
@@ -150,22 +168,6 @@ function HourlyForecast({ hourly, daily, currentTime }) {
             <path d={area} fill="url(#curveFill)" />
             <path className="curve-line" d={line} />
 
-            {/* Hour labels every 3 hours */}
-            {points.map(
-              (p, i) =>
-                i % 3 === 0 && (
-                  <text
-                    key={i}
-                    className="curve-label"
-                    x={p.x}
-                    y={H - 8}
-                    textAnchor="middle"
-                  >
-                    {formatHour(i)}
-                  </text>
-                )
-            )}
-
             {/* High and low of the day */}
             <text
               className="curve-peak"
@@ -183,6 +185,59 @@ function HourlyForecast({ hourly, daily, currentTime }) {
             >
               {Math.round(min)}°
             </text>
+
+            {/* Rain chance bars */}
+            {hasRain && (
+              <>
+                <text
+                  className="rain-title"
+                  x={PAD_X}
+                  y={RAIN_BASE - RAIN_MAX - 10}
+                >
+                  Chance of rain
+                </text>
+                <line
+                  className="rain-base"
+                  x1={PAD_X}
+                  x2={W - PAD_X}
+                  y1={RAIN_BASE}
+                  y2={RAIN_BASE}
+                />
+                {temps.map((_, i) => {
+                  const p = rain[i] ?? 0;
+                  const h = p > 0 ? Math.max(3, (p / 100) * RAIN_MAX) : 0;
+                  return (
+                    <rect
+                      key={i}
+                      className={`rain-bar ${
+                        i === activeHour ? "rain-bar-active" : ""
+                      }`}
+                      x={points[i].x - barWidth / 2}
+                      y={RAIN_BASE - h}
+                      width={barWidth}
+                      height={h}
+                      rx="3"
+                    />
+                  );
+                })}
+              </>
+            )}
+
+            {/* Hour labels every 3 hours */}
+            {points.map(
+              (p, i) =>
+                i % 3 === 0 && (
+                  <text
+                    key={i}
+                    className="curve-label"
+                    x={p.x}
+                    y={H - 8}
+                    textAnchor="middle"
+                  >
+                    {formatHour(i)}
+                  </text>
+                )
+            )}
 
             {/* The current hour (today only) */}
             {selectedDay === 0 && (
@@ -204,7 +259,7 @@ function HourlyForecast({ hourly, daily, currentTime }) {
                 x1="0"
                 x2="0"
                 y1={PAD_TOP - 18 - active.y}
-                y2={H - PAD_BOTTOM - active.y}
+                y2={RAIN_BASE - active.y}
               />
               <circle className="curve-dot" r="8" />
             </g>

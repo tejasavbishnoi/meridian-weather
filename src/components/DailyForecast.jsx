@@ -1,4 +1,5 @@
 import { getWeatherInfo } from "../utils/weatherCodes";
+import WeatherIcon from "./WeatherIcon";
 
 function DailyForecast({ daily, currentTemp }) {
   const mins = daily.temperature_2m_min;
@@ -30,7 +31,7 @@ function DailyForecast({ daily, currentTemp }) {
             <li className="week-row" key={date}>
               <span className="week-day">{day}</span>
               <span className="week-icon" title={info.label}>
-                {info.icon}
+                 <WeatherIcon code={daily.weather_code[i]} />
               </span>
               <span className="week-low">{Math.round(mins[i])}°</span>
               <span className="week-track" aria-hidden="true">

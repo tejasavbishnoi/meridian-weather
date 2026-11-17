@@ -1,5 +1,7 @@
 import { getWeatherInfo } from "../utils/weatherCodes";
 import { formatTime, formatDuration, tempToType } from "../utils/format";
+import { getAdvice } from "../utils/advice";
+import WeatherIcon from "./WeatherIcon";
 
 // A thin arc across the page with the sun's position on it
 function Horizon({ sunrise, sunset, now }) {
@@ -58,6 +60,7 @@ function CurrentWeather({
   location,
   current,
   daily,
+  hourly,
   units,
   isFavorite,
   onToggleFavorite,
@@ -65,6 +68,7 @@ function CurrentWeather({
   const info = getWeatherInfo(current.weather_code);
   const temp = Math.round(current.temperature_2m);
   const feels = Math.round(current.apparent_temperature);
+  const advice = getAdvice({ current, daily, hourly, units });
 
   // The type axes always work in Celsius, whatever unit is shown
   const celsius =
@@ -116,14 +120,19 @@ function CurrentWeather({
         </div>
 
         <div className="hero-side">
-          <span className="hero-icon" title={info.label}>
-            {info.icon}
+          <span className="hero-icon">
+            <WeatherIcon
+              code={current.weather_code}
+              isDay={current.is_day !== 0}
+            />
           </span>
           <p className="hero-summary">
             {info.label}. Feels like {feels}°.
           </p>
         </div>
       </div>
+
+      <p className="hero-advice">{advice}</p>
 
       <Horizon
         sunrise={daily.sunrise[0]}

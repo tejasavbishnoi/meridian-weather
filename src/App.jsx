@@ -239,6 +239,7 @@ function App() {
                   location={location}
                   current={weather.current}
                   daily={weather.daily}
+                  hourly={weather.hourly}
                   units={weather.current_units}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
